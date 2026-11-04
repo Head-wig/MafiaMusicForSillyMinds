@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mafia Soundboard</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            background: #1a1a1a url('QUIETCOLDMIKE.webp') no-repeat fixed center;
+            background-size: cover;          
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .panel-container {
+            background-color: rgba(0, 0, 0, 0.75);
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        h1 {
+            color: #e50914;
+            margin: 0 0 25px 0;
+            font-size: 28px;
+        }
+        .controls-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        button {
+            width: 100%; 
+            max-width: 320px;
+            padding: 14px 24px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            transition: background 0.2s, transform 0.1s;
+        }
+        button:active {
+            transform: scale(0.97);
+        }
+        #musicToggleBtn {
+            background-color: #444;
+            color: #fff;
+        }
+        #musicToggleBtn:hover {
+            background-color: #555;
+        }
+        .generate-btn {
+            background-color: #e50914;
+            color: #fff;
+        }
+        .generate-btn:hover {
+            background-color: #b80710;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="panel-container">
+        <h1>Make Mafia Mov</h1>
+        <div class="controls-container">
+            <button id="musicToggleBtn" onclick="toggleMusic()">Play Music</button>
+            <button class="generate-btn" onclick="playSequence()">Click for Ice In Your Crown</button>
+        </div>
+    </div>
+
+    <audio id="bgMusic" src="Mafia Music.wav" loop></audio>
+
+    <script>
+        const f1 = ["i bring.mp3", "i carry.mp3", "i go.mp3", "i got.mp3", "i move.mp3", "i walk.mp3", "she got.mp3", "we go.mp3"];
+        const f2 = ["blood in my.mp3", "chains in my.mp3", "crown in my.mp3", "gold in my.mp3", "hard in the.mp3", "ice in my.mp3", "keys in my.mp3", "loud in the.mp3", "loud like a.mp3", "quiet in the.mp3", "silent as a.mp3"];
+        const f3 = ["blood.mp3", "chains.mp3", "crown.mp3", "enemy.mp3", "fear.mp3", "gold.mp3", "keys.mp3", "night.mp3", "silence.mp3", "suit.mp3", "table.mp3", "Veins.mp3"];
+
+        const bg = document.getElementById("bgMusic");
+        const btn = document.getElementById("musicToggleBtn");
+        
+        let queue = [];
+        let idx = 0;
+
+        function toggleMusic() {
+            if (bg.paused) {
+                bg.volume = 0.4; 
+                bg.play().catch(e => console.log(e));
+                btn.textContent = "Pause Music";
+                btn.style.backgroundColor = "#222";
+            } else {
+                bg.pause();
+                btn.textContent = "Play Music";
+                btn.style.backgroundColor = "#444";
+            }
+        }
+
+        function pick(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function playSequence() {
+            queue.forEach(obj => {
+                obj.pause();
+                obj.src = "";
+            });
+            
+            idx = 0;
+            
+            const paths = [
+                "I move/" + pick(f1),
+                "Quiet in the/" + pick(f2),
+                "Fear/" + pick(f3)
+            ];
+
+            queue = paths.map(p => {
+                const a = new Audio(encodeURI(p));
+                a.preload = "auto";
+                return a;
+            });
+
+            function next() {
+                if (idx >= queue.length) return;
+
+                const current = queue[idx];
+                let triggered = false;
+
+                current.play().catch(() => {
+                    idx++;
+                    next();
+                });
+
+                current.ontimeupdate = () => {
+                    if (current.duration && !isNaN(current.duration)) {
+                        if ((current.duration - current.currentTime) <= 0.6 && !triggered) {
+                            triggered = true;
+                            idx++;
+                            next();
+                        }
+                    }
+                };
+
+                current.onended = () => {
+                    if (!triggered) {
+                        triggered = true;
+                        idx++;
+                        next();
+                    }
+                };
+            }
+
+            next();
+        }
+    </script>
+
+</body>
+</html>
