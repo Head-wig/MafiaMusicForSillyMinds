@@ -84,11 +84,11 @@
 <body>
 
     <div class="panel-container">
-        <h1>Make Mafia Mov</h1>
+        <h1>Make Mafia Move</h1>
         <div class="controls-container">
             <button id="musicToggleBtn" onclick="toggleMusic()">Play Music</button>
             <button class="generate-btn" onclick="playSequence()">Click for Ice In Your Crown</button>
-            <button id="loopToggleBtn" onclick="toggleLoop()">Auto Loop Sequence: OFF</button>
+            <button id="loopToggleBtn" onclick="toggleLoop()">Mafia Infinite: OFF</button>
         </div>
     </div>
 
@@ -124,13 +124,13 @@
         function toggleLoop() {
             isLooping = !isLooping;
             if (isLooping) {
-                loopBtn.textContent = "Auto Loop Sequence: ON";
+                loopBtn.textContent = "Mafia Infinite: ON";
                 loopBtn.classList.add("active");
                 if (queue.length === 0 || idx >= queue.length) {
                     playSequence();
                 }
             } else {
-                loopBtn.textContent = "Auto Loop Sequence: OFF";
+                loopBtn.textContent = "Mafia Infinite: OFF";
                 loopBtn.classList.remove("active");
                 clearTimeout(loopTimeout);
             }
