@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mafia Soundboard</title>
+    <title>Mafia Music For Silly Minds</title>
     <style>
         html, body {
             height: 100%;
@@ -66,6 +66,19 @@
         .generate-btn:hover {
             background-color: #b80710;
         }
+        #loopToggleBtn {
+            background-color: #2b5c8f;
+            color: #fff;
+        }
+        #loopToggleBtn:hover {
+            background-color: #1f446b;
+        }
+        #loopToggleBtn.active {
+            background-color: #267a3d;
+        }
+        #loopToggleBtn.active:hover {
+            background-color: #1b572b;
+        }
     </style>
 </head>
 <body>
@@ -75,6 +88,7 @@
         <div class="controls-container">
             <button id="musicToggleBtn" onclick="toggleMusic()">Play Music</button>
             <button class="generate-btn" onclick="playSequence()">Click for Ice In Your Crown</button>
+            <button id="loopToggleBtn" onclick="toggleLoop()">Auto Loop Sequence: OFF</button>
         </div>
     </div>
 
@@ -87,9 +101,12 @@
 
         const bg = document.getElementById("bgMusic");
         const btn = document.getElementById("musicToggleBtn");
+        const loopBtn = document.getElementById("loopToggleBtn");
         
         let queue = [];
         let idx = 0;
+        let isLooping = false;
+        let loopTimeout = null;
 
         function toggleMusic() {
             if (bg.paused) {
@@ -104,11 +121,27 @@
             }
         }
 
+        function toggleLoop() {
+            isLooping = !isLooping;
+            if (isLooping) {
+                loopBtn.textContent = "Auto Loop Sequence: ON";
+                loopBtn.classList.add("active");
+                if (queue.length === 0 || idx >= queue.length) {
+                    playSequence();
+                }
+            } else {
+                loopBtn.textContent = "Auto Loop Sequence: OFF";
+                loopBtn.classList.remove("active");
+                clearTimeout(loopTimeout);
+            }
+        }
+
         function pick(arr) {
             return arr[Math.floor(Math.random() * arr.length)];
         }
 
         function playSequence() {
+            clearTimeout(loopTimeout);
             queue.forEach(obj => {
                 obj.pause();
                 obj.src = "";
@@ -129,7 +162,14 @@
             });
 
             function next() {
-                if (idx >= queue.length) return;
+                if (idx >= queue.length) {
+                    if (isLooping) {
+                        loopTimeout = setTimeout(playSequence, 1200); 
+                    } else {
+                        queue = [];
+                    }
+                    return;
+                }
 
                 const current = queue[idx];
                 let triggered = false;
